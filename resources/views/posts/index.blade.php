@@ -118,3 +118,65 @@
 </body>
 
 </html>
+
+<style>
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    padding: 20px;
+}
+
+form {
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #fff;
+}
+
+input, textarea {
+    padding: 10px;
+    margin: 10px 0;
+}
+
+
+button {
+    padding: 10px 15px;
+    margin: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    background-color: #fff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: rgba(62, 127, 198, 0.1);
+}
+
+h3 {
+    margin: 0;
+    color: #333;
+}
+
+p {
+    color: #555;
+}
+
+
+div form {
+    margin-top: 20px;
+}
+
+</style>
