@@ -24,17 +24,19 @@
 
                 <button @click="editPost(post)">Edit</button>
                 <button @click="deletePost(post.id)">Delete</button>
+
+                <!-- Редактор под постом -->
+                <div v-if="editingPost && editingPost.id === post.id">
+                    <h2>Edit Post</h2>
+                    <form @submit.prevent="updatePost">
+                        <input type="text" v-model="editingPost.title" placeholder="Title" required>
+                        <textarea v-model="editingPost.content" placeholder="Content" required></textarea>
+                        <button type="submit">Update Post</button>
+                        <button @click="cancelEdit">Cancel</button>
+                    </form>
+                </div>
             </li>
         </ul>
-        <div v-if="editingPost">
-            <h2>Edit Post</h2>
-            <form @submit.prevent="updatePost">
-                <input type="text" v-model="editingPost.title" placeholder="Title" required>
-                <textarea v-model="editingPost.content" placeholder="Content" required></textarea>
-                <button type="submit">Update Post</button>
-                <button @click="editingPost = null">Cancel</button>
-            </form>
-        </div>
     </div>
     <script>
     const app = Vue.createApp({
