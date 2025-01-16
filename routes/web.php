@@ -12,14 +12,11 @@ Route::get('/posts', function () {
 Route::get('/posts/data', [PostController::class, 'index']);
 Route::post('/posts/store', [PostController::class, 'store']);
 
-// Создание нового поста
-Route::post('/posts', [PostController::class, 'store']);
-
-// Обновление поста
+Route::delete('/posts/{id}', [PostController::class, 'destroy']);
 Route::put('/posts/{id}', [PostController::class, 'update']);
 
-// Удаление поста
-Route::delete('/posts/{id}', [PostController::class, 'destroy']);
+// Создание нового поста
+Route::post('/posts', [PostController::class, 'store']);
 
 // Публикация поста
 Route::patch('/posts/{id}/publish', [PostController::class, 'publish']);

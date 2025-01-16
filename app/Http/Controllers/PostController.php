@@ -12,8 +12,12 @@ class PostController extends Controller
      */
     public function index()
     {
-        // Получение всех постов
-        return response()->json(Post::all(), 200);
+        try {
+            $posts = Post::whereNull('deleted_at')->get(); // Только активные посты
+            return response()->json($posts, 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -37,26 +41,22 @@ class PostController extends Controller
         return response()->json($post, 201);
     }
 
+
     /**
      * Обновление поста.
      */
     public function update(Request $request, $id)
     {
-        // Найти пост по ID
         $post = Post::findOrFail($id);
 
-        // Валидация данных
         $validated = $request->validate([
-            'title' => 'sometimes|required|string|max:255',
-            'content' => 'sometimes|required|string',
-            'is_published' => 'sometimes|boolean',
-            'publish_at' => 'nullable|date',
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
         ]);
 
-        // Обновление поста
         $post->update($validated);
 
-        return response()->json($post, 200);
+        return response()->json($post);
     }
 
     /**
@@ -64,14 +64,26 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        // Найти пост по ID
-        $post = Post::findOrFail($id);
-
-        // Удалить пост
-        $post->delete();
-
-        return response()->json(['message' => 'Post deleted successfully'], 204);
+        try {
+            $post = Post::findOrFail($id);
+            $post->delete(); // Мягкое удаление
+            return response()->json(['message' => 'Post deleted successfully.'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
+
+    public function restore($id)
+{
+    try {
+        $post = Post::withTrashed()->findOrFail($id); // Находим удалённый пост
+        $post->restore(); // Восстанавливаем пост
+        return response()->json(['message' => 'Post restored successfully.', 'post' => $post], 200);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+}
+
 
     /**
      * Публикация поста.
