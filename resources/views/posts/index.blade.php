@@ -25,7 +25,6 @@
                 <button @click="editPost(post)">Edit</button>
                 <button @click="deletePost(post.id)">Delete</button>
 
-                <!-- Редактор под постом -->
                 <div v-if="editingPost && editingPost.id === post.id">
                     <h2>Edit Post</h2>
                     <form @submit.prevent="updatePost">
@@ -47,12 +46,12 @@
                     title: '',
                     content: ''
                 },
-                editingPost: null // Пост для редактирования
+                editingPost: null
             };
         },
         methods: {
             fetchPosts() {
-            axios.get('/posts/data') // Здесь маршрут уже верный
+            axios.get('/posts/data')
                 .then(response => {
                     this.posts = response.data;
                 })
@@ -68,7 +67,7 @@
                 formData.append('image', this.$refs.image.files[0]);
             }
 
-            axios.post('/posts', formData, { // POST-запрос на /posts
+            axios.post('/posts', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             })
             .then(response => {

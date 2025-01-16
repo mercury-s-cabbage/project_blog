@@ -7,28 +7,23 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    /**
-     * Отображение всех постов.
-     */
+
     public function index()
     {
         try {
-            $posts = Post::whereNull('deleted_at')->get(); // Только активные посты
+            $posts = Post::whereNull('deleted_at')->get();
             return response()->json($posts, 200);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
-    /**
-     * Создание нового поста.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Ограничение на тип файла и размер
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($request->hasFile('image')) {
@@ -41,10 +36,6 @@ class PostController extends Controller
         return response()->json($post, 201);
     }
 
-
-    /**
-     * Обновление поста.
-     */
     public function update(Request $request, $id)
     {
         $post = Post::findOrFail($id);
@@ -59,45 +50,48 @@ class PostController extends Controller
         return response()->json($post);
     }
 
-    /**
-     * Удаление поста.
-     */
     public function destroy($id)
     {
         try {
             $post = Post::findOrFail($id);
-            $post->delete(); // Мягкое удаление
+            $post->delete();
             return response()->json(['message' => 'Post deleted successfully.'], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
-    public function restore($id)
-{
-    try {
-        $post = Post::withTrashed()->findOrFail($id); // Находим удалённый пост
-        $post->restore(); // Восстанавливаем пост
-        return response()->json(['message' => 'Post restored successfully.', 'post' => $post], 200);
-    } catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage()], 500);
-    }
-}
 
-
-    /**
-     * Публикация поста.
-     */
     public function publish($id)
     {
-        // Найти пост по ID
         $post = Post::findOrFail($id);
 
-        // Обновить статус публикации
+
         $post->is_published = true;
         $post->publish_at = now();
         $post->save();
 
         return response()->json($post, 200);
+    }
+
+    public function trashed()
+    {
+        try {
+            $trashedPosts = Post::onlyTrashed()->get();
+            return view('posts.trashed', compact('trashedPosts'));
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function restore($id)
+    {
+        try {
+            $post = Post::withTrashed()->findOrFail($id);
+            $post->restore();
+            return redirect()->route('posts.trashed')->with('success', 'Post restored successfully.');
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }

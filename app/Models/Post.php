@@ -16,5 +16,5 @@ class Post extends Model
         'publish_at' => 'datetime',
     ];
 
-    protected $hidden = ['deleted_at']; // Скрыть deleted_at при преобразовании в JSON
+    protected $hidden = ['deleted_at'];
 }
